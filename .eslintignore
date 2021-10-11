@@ -1,0 +1,5 @@
+# Ignore artifacts:
+public
+tsconfig.json
+package.json
+src/assets/*
