@@ -1,8 +1,8 @@
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement} from 'react';
 import {useStore} from 'effector-react';
 
 import {TreeView} from 'components/TreeView';
-import {cacheData$, editorReset} from 'models/cache';
+import {applyChanges, cacheSelected, cacheState$, editorReset, elementDeleted} from 'models/editor';
 import {Root, Toolbar} from './styled';
 
 export interface CacheViewProps {
@@ -10,45 +10,33 @@ export interface CacheViewProps {
 }
 
 export const CacheView = ({className}: CacheViewProps): ReactElement => {
-    const {innerData: {nodes: cacheNodes}} = useStore(cacheData$);
-
-    const [selectedIdsChain, setSelectedIdsChain] = useState<string[]>([]);
-    const isNodeSelected = selectedIdsChain.length > 0;
-    const selectedId = isNodeSelected ? selectedIdsChain[selectedIdsChain.length - 1] : undefined;
+    const {data, selectedId} = useStore(cacheState$);
 
     return (
         <Root className={className}>
             <TreeView
-                data={cacheNodes}
-                onElementSelected={(idsChain) => setSelectedIdsChain(idsChain)}
-                selectedId={selectedId}
+                data={data.innerData.nodes}
+                onElementSelected={cacheSelected}
+                selectedId={selectedId ?? undefined}
             />
 
             <Toolbar>
-                <button
-                    onClick={() => console.log('add', selectedIdsChain)}
-                    disabled={!isNodeSelected}
-                >
+                <button onClick={() => console.log('add')} disabled={selectedId === null}>
                     +
                 </button>
-                <button
-                    onClick={() => console.log('delete', selectedIdsChain)}
-                    disabled={!isNodeSelected}
-                >
+                <button onClick={() => elementDeleted()} disabled={selectedId === null}>
                     -
                 </button>
-                <button
-                    onClick={() => console.log('edit', selectedIdsChain)}
-                    disabled={!isNodeSelected}
-                >
+                <button onClick={() => console.log('edit')} disabled={selectedId === null}>
                     a
                 </button>
-                <button onClick={() => console.log('apply')} disabled={Object.keys(cacheNodes).length === 0}>
+                <button
+                    onClick={() => applyChanges()}
+                    disabled={Object.keys(data.innerData.nodes).length === 0}
+                >
                     Apply
                 </button>
-                <button onClick={() => editorReset()}>
-                    Reset
-                </button>
+                <button onClick={() => editorReset()}>Reset</button>
             </Toolbar>
         </Root>
     );

@@ -8,7 +8,7 @@ export interface TreeNode extends ShortTreeNode {
 }
 
 export interface CacheTreeNode extends Omit<TreeNode, 'nodes'> {
-    parentId: string | null;
+    originalParentIdsChain?: string[];
     nodes: Record<string, CacheTreeNode>;
 }
 

@@ -1,4 +1,5 @@
-import {ChainError, ShortTreeNode, TreeNode} from 'types';
+import {CacheTreeNode, ChainError, ShortTreeNode, TreeNode} from 'types';
+import {getBranch, updateBranch} from 'utils';
 
 const defaultData: Record<string, TreeNode> = {
     node1: {
@@ -31,6 +32,7 @@ const defaultData: Record<string, TreeNode> = {
                         nodes: {
                             node8: {
                                 value: 'node8',
+                                disabled: true,
                                 nodes: {
                                     node9: {
                                         value: 'node9',
@@ -53,25 +55,34 @@ const defaultData: Record<string, TreeNode> = {
             },
             node12: {
                 value: 'node12',
+                disabled: true,
                 nodes: {},
             },
         },
     },
 };
 
+const getDefaultData = (): Record<string, TreeNode> => {
+    return JSON.parse(JSON.stringify(defaultData));
+};
+
 export class Database {
-    static data: TreeNode = {value: null, nodes: defaultData};
+    private static data: TreeNode = {value: null, nodes: getDefaultData()};
 
     static reset(): void {
-        Database.data = {value: null, nodes: defaultData};
+        Database.data = {value: null, nodes: getDefaultData()};
+        console.log(Database.data);
     }
 
-    static update(): void {
-        // TODO
+    static update(cacheRootNode: CacheTreeNode): void {
+        Object.entries(cacheRootNode.nodes).forEach(([nodeId, node]) => {
+            const dbTreeNode = getBranch(Database.data, [...node.originalParentIdsChain!, nodeId]);
+            updateBranch(node, dbTreeNode);
+        });
     }
 
-    static getFullData(): Record<string, TreeNode> {
-        return Database.data.nodes;
+    static getData(): TreeNode {
+        return Database.data;
     }
 
     static getElement(idsChain: string[]): {node: ShortTreeNode; idsChain: string[]} {

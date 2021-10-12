@@ -1,8 +1,8 @@
-import React, {ReactElement, useState} from 'react';
+import React, {ReactElement} from 'react';
+import {useStore} from 'effector-react';
 
-import {Database} from 'api/database';
 import {TreeView} from 'components/TreeView';
-import {elementPulled} from 'models/cache';
+import {dbSelected, dbState$, elementPulled} from 'models/editor';
 import {Root, Toolbar} from './styled';
 
 export interface DatabaseViewProps {
@@ -10,20 +10,18 @@ export interface DatabaseViewProps {
 }
 
 export const DatabaseView = ({className}: DatabaseViewProps): ReactElement => {
-    const [selectedIdsChain, setSelectedIdsChain] = useState<string[]>([]);
-    const isNodeSelected = selectedIdsChain.length > 0;
-    const selectedId = isNodeSelected ? selectedIdsChain[selectedIdsChain.length - 1] : undefined;
+    const {data, selectedId} = useStore(dbState$);
 
     return (
         <Root className={className}>
             <TreeView
-                data={Database.getFullData()}
-                onElementSelected={(idsChain) => setSelectedIdsChain(idsChain)}
-                selectedId={selectedId}
+                data={data.innerData.nodes}
+                onElementSelected={dbSelected}
+                selectedId={selectedId ?? undefined}
             />
 
             <Toolbar>
-                <button onClick={() => elementPulled(selectedIdsChain)} disabled={!isNodeSelected}>
+                <button onClick={() => elementPulled()} disabled={selectedId === null}>
                     Pull
                 </button>
             </Toolbar>

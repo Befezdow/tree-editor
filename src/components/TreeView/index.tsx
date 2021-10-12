@@ -19,18 +19,17 @@ export const TreeView = ({
 }: TreeViewProps): ReactElement => (
     <Root className={className}>
         <ElementsContainer>
-            {Object.entries(data)
-                .filter(([, value]) => !value.disabled)
-                .map(([key, value]) => (
-                    <TreeViewElement
-                        key={key}
-                        data={value}
-                        nestingLevel={0}
-                        keysChain={[key]}
-                        onSelected={onElementSelected}
-                        selectedId={selectedId}
-                    />
-                ))}
+            {Object.entries(data).map(([key, value]) => (
+                <TreeViewElement
+                    key={key}
+                    data={value}
+                    nestingLevel={0}
+                    keysChain={[key]}
+                    onSelected={onElementSelected}
+                    selectedId={selectedId}
+                    isParentDisabled={false}
+                />
+            ))}
         </ElementsContainer>
     </Root>
 );
@@ -41,24 +40,28 @@ const TreeViewElement = ({
     nestingLevel,
     onSelected,
     selectedId,
+    isParentDisabled,
 }: {
     data: TreeNode;
     keysChain: string[];
     nestingLevel: number;
     onSelected: (idsChain: string[]) => void;
+    isParentDisabled: boolean;
     selectedId?: string;
-}): ReactElement => (
-    <>
-        <TreeElement
-            nestingLevel={nestingLevel}
-            onClick={() => onSelected(keysChain)}
-            isSelected={keysChain[keysChain.length - 1] === selectedId}
-        >
-            {data.value}
-        </TreeElement>
-        {Object.entries(data.nodes)
-            .filter(([, value]) => !value.disabled)
-            .map(([key, value]) => (
+}): ReactElement => {
+    const isDisabled = isParentDisabled || !!data.disabled;
+
+    return (
+        <>
+            <TreeElement
+                nestingLevel={nestingLevel}
+                onClick={() => !data.disabled && onSelected(keysChain)}
+                isSelected={keysChain[keysChain.length - 1] === selectedId}
+                isDisabled={isDisabled}
+            >
+                {data.value}
+            </TreeElement>
+            {Object.entries(data.nodes).map(([key, value]) => (
                 <TreeViewElement
                     key={key}
                     data={value}
@@ -66,7 +69,9 @@ const TreeViewElement = ({
                     keysChain={[...keysChain, key]}
                     onSelected={onSelected}
                     selectedId={selectedId}
+                    isParentDisabled={isDisabled}
                 />
             ))}
-    </>
-);
+        </>
+    );
+};
