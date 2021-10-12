@@ -21,7 +21,32 @@ import {
 
 // database
 
-dbData$.on([EditorGate.open, updateDbFx.done, resetDbFx.done], () => ({innerData: Database.getData()}));
+dbData$.on([EditorGate.open, updateDbFx.done, resetDbFx.done], () => ({
+    innerData: Database.getData(),
+}));
+dbSelectedIdsChain$.reset(pullElementFromDbFx.done, editorReset);
+
+forward({from: editorReset, to: resetDbFx});
+
+sample({
+    clock: elementPulled,
+    source: dbSelectedIdsChain$,
+    target: pullElementFromDbFx,
+});
+
+sample({
+    clock: applyChanges,
+    source: cacheData$.map((state) => state.innerData),
+    target: updateDbFx,
+});
+
+pullElementFromDbFx.failData.watch((error) => {
+    const chainError = error as ChainError;
+    console.error(chainError.message, chainError.chain);
+});
+
+// cache
+
 cacheData$
     .on(pullElementFromDbFx.doneData, (state, payload) => {
         const rootNode = state.innerData;
@@ -64,30 +89,6 @@ cacheData$
     .on(editorReset, () => ({
         innerData: {value: null, nodes: {}},
     }));
-
-dbSelectedIdsChain$.reset(pullElementFromDbFx.done, editorReset);
-
-forward({from: editorReset, to: resetDbFx});
-
-sample({
-    clock: elementPulled,
-    source: dbSelectedIdsChain$,
-    target: pullElementFromDbFx,
-});
-
-sample({
-    clock: applyChanges,
-    source: cacheData$.map((state) => state.innerData),
-    target: updateDbFx,
-});
-
-pullElementFromDbFx.failData.watch((error) => {
-    const chainError = error as ChainError;
-    console.error(chainError.message, chainError.chain);
-});
-
-// cache
-
 cacheSelectedIdsChain$.reset(cacheSelectedReset, editorReset);
 
 sample({
