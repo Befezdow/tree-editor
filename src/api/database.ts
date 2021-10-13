@@ -1,5 +1,5 @@
 import {CacheTreeNode, ChainError, ShortTreeNode, TreeNode} from 'types';
-import {getBranch, updateBranch} from 'utils';
+import {getBranch, mapBranch, updateBranch} from 'utils';
 
 const defaultData: Record<string, TreeNode> = {
     node1: {
@@ -68,16 +68,30 @@ const getDefaultData = (): Record<string, TreeNode> => {
 
 export class Database {
     private static data: TreeNode = {value: null, nodes: getDefaultData()};
+    private static idCounter = 0;
+
+    static getNewId(): string {
+        const temp = Database.idCounter;
+        Database.idCounter++;
+        return temp.toString();
+    }
 
     static reset(): void {
         Database.data = {value: null, nodes: getDefaultData()};
-        console.log(Database.data);
     }
 
     static update(cacheRootNode: CacheTreeNode): void {
         Object.entries(cacheRootNode.nodes).forEach(([nodeId, node]) => {
-            const dbTreeNode = getBranch(Database.data, [...node.originalParentIdsChain!, nodeId]);
-            updateBranch(node, dbTreeNode);
+            const dbTreeNode = getBranch(
+                Database.data,
+                [...node.originalParentIdsChain!, nodeId],
+                true,
+            );
+            if (dbTreeNode === Database.data) {
+                Database.data.nodes[nodeId] = mapBranch(node);
+            } else {
+                updateBranch(node, dbTreeNode);
+            }
         });
     }
 

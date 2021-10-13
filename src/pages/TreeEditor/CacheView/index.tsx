@@ -2,7 +2,16 @@ import React, {ReactElement} from 'react';
 import {useStore} from 'effector-react';
 
 import {TreeView} from 'components/TreeView';
-import {applyChanges, cacheSelected, cacheState$, editorReset, elementDeleted} from 'models/editor';
+import {
+    applyChanges,
+    cacheSelected,
+    cacheState$,
+    editorReset,
+    elementAdded,
+    elementDeleted,
+    elementEditEnded,
+    elementEditStarted,
+} from 'models/editor';
 import {Root, Toolbar} from './styled';
 
 export interface CacheViewProps {
@@ -10,7 +19,7 @@ export interface CacheViewProps {
 }
 
 export const CacheView = ({className}: CacheViewProps): ReactElement => {
-    const {data, selectedId} = useStore(cacheState$);
+    const {data, selectedId, cacheEditing} = useStore(cacheState$);
 
     return (
         <Root className={className}>
@@ -18,16 +27,18 @@ export const CacheView = ({className}: CacheViewProps): ReactElement => {
                 data={data.innerData.nodes}
                 onElementSelected={cacheSelected}
                 selectedId={selectedId ?? undefined}
+                isEditing={cacheEditing}
+                onFinishEditing={elementEditEnded}
             />
 
             <Toolbar>
-                <button onClick={() => console.log('add')} disabled={selectedId === null}>
+                <button onClick={() => elementAdded()}>
                     +
                 </button>
                 <button onClick={() => elementDeleted()} disabled={selectedId === null}>
                     -
                 </button>
-                <button onClick={() => console.log('edit')} disabled={selectedId === null}>
+                <button onClick={() => elementEditStarted()} disabled={selectedId === null}>
                     a
                 </button>
                 <button

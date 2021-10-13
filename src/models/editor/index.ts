@@ -1,5 +1,5 @@
 import {combine, createDomain, restore} from 'effector';
-import {createGate} from "effector-react";
+import {createGate} from 'effector-react';
 
 import {Database} from 'api/database';
 import {CacheTreeNode, TreeNode} from 'types';
@@ -30,28 +30,37 @@ export const updateDbFx = domain.createEffect({
 export const dbSelected = domain.createEvent<string[]>();
 export const cacheSelected = domain.createEvent<string[]>();
 export const cacheSelectedReset = domain.createEvent();
+export const cacheEditingReset = domain.createEvent();
 
 export const elementPulled = domain.createEvent();
 export const elementDeleted = domain.createEvent();
+export const elementEditStarted = domain.createEvent();
+export const elementEditEnded = domain.createEvent<string>();
+export const elementAdded = domain.createEvent();
 export const editorReset = domain.createEvent();
 export const applyChanges = domain.createEvent();
+
+export const newElementCreated =
+    domain.createEvent<{parentIdsChain: string[]; newNodeId: string; newNode: CacheTreeNode}>();
 
 // stores
 
 export const dbData$ = domain.createStore<{innerData: TreeNode}>({
     innerData: {value: null, nodes: {}},
 });
-export const cacheData$ = domain.createStore<{innerData: CacheTreeNode}>({
-    innerData: {value: null, nodes: {}},
-});
 export const dbSelectedIdsChain$ = restore(dbSelected, []);
 export const dbSelectedId$ = dbSelectedIdsChain$.map<string | null>((state) =>
     state.length > 0 ? state[state.length - 1] : null,
 );
+
+export const cacheData$ = domain.createStore<{innerData: CacheTreeNode}>({
+    innerData: {value: null, nodes: {}},
+});
 export const cacheSelectedIdsChain$ = restore(cacheSelected, []);
 export const cacheSelectedId$ = cacheSelectedIdsChain$.map<string | null>((state) =>
     state.length > 0 ? state[state.length - 1] : null,
 );
+export const cacheEditing$ = domain.createStore<boolean>(false);
 
 // component states
 
@@ -63,4 +72,5 @@ export const dbState$ = combine({
 export const cacheState$ = combine({
     data: cacheData$,
     selectedId: cacheSelectedId$,
+    cacheEditing: cacheEditing$,
 });
