@@ -1,10 +1,10 @@
-import {combine, guard, sample} from 'effector';
+import {combine, guard, merge, sample} from 'effector';
 
 import {getBranch} from 'utils';
 import {CacheTreeNode} from 'types';
 import {Database} from 'api/database';
-import {editorReset} from '../';
-import {pullElementFromDbFx} from '../database';
+import {EditorGate, editorReset} from '../';
+import {pullElementFromDbFx, updateDbFx} from '../database';
 import {
     cacheData$,
     cacheEditing$,
@@ -12,6 +12,7 @@ import {
     cacheSelectedId$,
     cacheSelectedIdsChain$,
     cacheSelectedReset,
+    deletedIds,
     elementAdded,
     elementDeleted,
     elementEditEnded,
@@ -87,6 +88,7 @@ sample({
         }
 
         deletedNode.disabled = true;
+        deletedIds.add(idsChain[idsChain.length - 1]);
 
         return {innerData: rootNode};
     },
@@ -136,3 +138,24 @@ sample({
     },
     target: newElementCreated,
 });
+
+sample({
+    clock: updateDbFx.done,
+    source: cacheData$,
+    fn: (data) => {
+        const topLevelNodes = data.innerData.nodes;
+        Object.values(topLevelNodes).forEach((topLevelNode) => {
+            topLevelNode.originalParentIdsChain!.forEach((elem) => {
+                if (deletedIds.has(elem)) {
+                    topLevelNode.disabled = true;
+                }
+            });
+        });
+        deletedIds.clear();
+
+        return {innerData: data.innerData};
+    },
+    target: cacheData$,
+});
+
+merge([EditorGate.close, editorReset]).watch(() => deletedIds.clear());

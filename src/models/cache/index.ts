@@ -5,6 +5,8 @@ import {rootDomain} from '../';
 
 const domain = rootDomain.createDomain('cacheDomain');
 
+export const deletedIds = new Set<string>();
+
 // events
 
 export const cacheSelected = domain.createEvent<string[]>();
