@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import {buttonReset} from "../../../theme";
 
 export const Root = styled.div`
     display: flex;
@@ -18,4 +19,8 @@ export const Toolbar = styled.div`
     display: flex;
     align-items: center;
     gap: 10px;
+`;
+
+export const Button = styled.button`
+    ${buttonReset};
 `;

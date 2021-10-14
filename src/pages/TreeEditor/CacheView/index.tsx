@@ -11,7 +11,7 @@ import {
     elementEditEnded,
     elementEditStarted,
 } from 'models/cache';
-import {Root, Toolbar} from './styled';
+import {Button, LeftPanel, RightPanel, Root, SmallButton, Toolbar} from './styled';
 
 export interface CacheViewProps {
     className?: string;
@@ -31,20 +31,24 @@ export const CacheView = ({className}: CacheViewProps): ReactElement => {
             />
 
             <Toolbar>
-                <button onClick={() => elementAdded()}>+</button>
-                <button onClick={() => elementDeleted()} disabled={selectedId === null}>
-                    -
-                </button>
-                <button onClick={() => elementEditStarted()} disabled={selectedId === null}>
-                    a
-                </button>
-                <button
-                    onClick={() => changesApplied()}
-                    disabled={Object.keys(data.innerData.nodes).length === 0}
-                >
-                    Apply
-                </button>
-                <button onClick={() => editorReset()}>Reset</button>
+                <LeftPanel>
+                    <SmallButton onClick={() => elementAdded()}>+</SmallButton>
+                    <SmallButton onClick={() => elementDeleted()} disabled={selectedId === null}>
+                        -
+                    </SmallButton>
+                    <Button onClick={() => elementEditStarted()} disabled={selectedId === null}>
+                        Edit
+                    </Button>
+                </LeftPanel>
+                <RightPanel>
+                    <Button
+                        onClick={() => changesApplied()}
+                        disabled={Object.keys(data.innerData.nodes).length === 0}
+                    >
+                        Apply
+                    </Button>
+                    <Button onClick={() => editorReset()}>Reset</Button>
+                </RightPanel>
             </Toolbar>
         </Root>
     );

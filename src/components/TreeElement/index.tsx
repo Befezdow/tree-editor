@@ -45,6 +45,7 @@ export const TreeElement = ({
                     onKeyDown={(event) =>
                         event.key === 'Enter' && onFinishEditing && onFinishEditing(editValue)
                     }
+                    onFocus={(event) => event.target.select()}
                     autoFocus
                 />
             ) : (
