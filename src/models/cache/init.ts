@@ -145,11 +145,14 @@ sample({
     fn: (data) => {
         const topLevelNodes = data.innerData.nodes;
         Object.values(topLevelNodes).forEach((topLevelNode) => {
-            topLevelNode.originalParentIdsChain!.forEach((elem) => {
-                if (deletedIds.has(elem)) {
-                    topLevelNode.disabled = true;
+            if (!topLevelNode.disabled) {
+                for (const elem of topLevelNode.originalParentIdsChain!) {
+                    if (deletedIds.has(elem)) {
+                        topLevelNode.disabled = true;
+                        break;
+                    }
                 }
-            });
+            }
         });
         deletedIds.clear();
 
