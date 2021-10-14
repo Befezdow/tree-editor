@@ -3,7 +3,7 @@ import {useStore} from 'effector-react';
 
 import {TreeView} from 'components/TreeView';
 import {dbSelected, dbState$, elementPulled} from 'models/database';
-import {Root, Toolbar} from './styled';
+import {Button, Root, Toolbar} from './styled';
 
 export interface DatabaseViewProps {
     className?: string;
@@ -21,9 +21,9 @@ export const DatabaseView = ({className}: DatabaseViewProps): ReactElement => {
             />
 
             <Toolbar>
-                <button onClick={() => elementPulled()} disabled={selectedId === null}>
+                <Button onClick={() => elementPulled()} disabled={selectedId === null}>
                     Pull
-                </button>
+                </Button>
             </Toolbar>
         </Root>
     );

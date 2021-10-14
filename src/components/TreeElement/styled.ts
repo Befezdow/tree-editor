@@ -4,9 +4,18 @@ import {colors} from 'theme';
 
 const offsetWidth = 10; // pixels
 
+export const Label = styled.div`
+    white-space: nowrap;
+    user-select: none;
+`;
+
 export const Root = styled.div<{offsetsCount: number; isSelected?: boolean; isDisabled?: boolean}>`
     padding: 5px 0 5px ${({offsetsCount}) => `${offsetsCount * offsetWidth}px`};
     cursor: pointer;
+
+    ${Label} {
+        color: ${colors.text};
+    }
 
     background-color: ${({isSelected}) =>
         isSelected ? colors.backgroundActive : colors.backgroundMain};
@@ -32,9 +41,6 @@ export const Root = styled.div<{offsetsCount: number; isSelected?: boolean; isDi
         `}
 `;
 
-export const Label = styled.div`
-    white-space: nowrap;
-    user-select: none;
+export const LabelEditor = styled.input`
+    color: ${colors.text};
 `;
-
-export const LabelEditor = styled.input``;
