@@ -2,7 +2,7 @@ import React, {ReactElement} from 'react';
 import {useStore} from 'effector-react';
 
 import {TreeView} from 'components/TreeView';
-import {dbSelected, dbState$, elementPulled} from 'models/editor';
+import {dbSelected, dbState$, elementPulled} from 'models/database';
 import {Root, Toolbar} from './styled';
 
 export interface DatabaseViewProps {

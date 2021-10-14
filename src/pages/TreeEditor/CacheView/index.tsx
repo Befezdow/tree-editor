@@ -2,16 +2,15 @@ import React, {ReactElement} from 'react';
 import {useStore} from 'effector-react';
 
 import {TreeView} from 'components/TreeView';
+import {changesApplied, editorReset} from 'models';
 import {
-    applyChanges,
     cacheSelected,
     cacheState$,
-    editorReset,
     elementAdded,
     elementDeleted,
     elementEditEnded,
     elementEditStarted,
-} from 'models/editor';
+} from 'models/cache';
 import {Root, Toolbar} from './styled';
 
 export interface CacheViewProps {
@@ -32,9 +31,7 @@ export const CacheView = ({className}: CacheViewProps): ReactElement => {
             />
 
             <Toolbar>
-                <button onClick={() => elementAdded()}>
-                    +
-                </button>
+                <button onClick={() => elementAdded()}>+</button>
                 <button onClick={() => elementDeleted()} disabled={selectedId === null}>
                     -
                 </button>
@@ -42,7 +39,7 @@ export const CacheView = ({className}: CacheViewProps): ReactElement => {
                     a
                 </button>
                 <button
-                    onClick={() => applyChanges()}
+                    onClick={() => changesApplied()}
                     disabled={Object.keys(data.innerData.nodes).length === 0}
                 >
                     Apply

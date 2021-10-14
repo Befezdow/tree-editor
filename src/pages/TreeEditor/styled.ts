@@ -14,6 +14,7 @@ export const Root = styled.div`
     background-color: lightgray;
   
     > div {
+      width: calc(50% - 10px);
       flex: 1;
     }
 `;

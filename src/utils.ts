@@ -1,5 +1,6 @@
 import {CacheTreeNode, TreeNode} from './types';
 
+// search node by chain of IDs in rootNode node
 export const getBranch = (rootNode: TreeNode, idsChain: string[], strict = false): TreeNode => {
     let result = rootNode;
     for (const elem of idsChain) {
@@ -17,6 +18,7 @@ export const getBranch = (rootNode: TreeNode, idsChain: string[], strict = false
     return result;
 };
 
+// map CacheTreeNode to TreeNode with deep clone
 export const mapBranch = (node: CacheTreeNode): TreeNode => {
     return {
         value: node.value,
@@ -27,6 +29,7 @@ export const mapBranch = (node: CacheTreeNode): TreeNode => {
     };
 };
 
+// update node target with information from node source
 export const updateBranch = (source: CacheTreeNode, target: TreeNode): void => {
     if (source.disabled) {
         target.disabled = true;

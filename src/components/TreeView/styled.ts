@@ -7,5 +7,7 @@ export const Root = styled.div`
 `;
 
 export const ElementsContainer = styled.div`
+    display: inline-block;
     margin: 20px;
+    min-width: calc((100vw - 144px) / 2);
 `;

@@ -3,7 +3,6 @@ import React, {ReactElement} from 'react';
 import {TreeNode} from 'types';
 import {TreeElement} from 'components/TreeElement';
 import {ElementsContainer, Root} from './styled';
-import {cacheSelected} from '../../models/editor';
 
 export interface TreeViewProps {
     data: Record<string, TreeNode>;
@@ -22,7 +21,7 @@ export const TreeView = ({
     onFinishEditing,
     className,
 }: TreeViewProps): ReactElement => (
-    <Root className={className} onClick={() => cacheSelected([])}>
+    <Root className={className} onClick={() => onElementSelected([])}>
         <ElementsContainer>
             {Object.entries(data).map(([key, value]) => (
                 <TreeViewElement

@@ -1,6 +1,6 @@
 import React, {ReactElement} from 'react';
 
-import {EditorGate} from 'models/editor';
+import {EditorGate} from 'models';
 import {DatabaseView} from './DatabaseView';
 import {CacheView} from './CacheView';
 import {Root} from './styled';

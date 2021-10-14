@@ -1,58 +1,23 @@
-import {combine, forward, guard, sample} from 'effector';
+import {combine, guard, sample} from 'effector';
 
-import {CacheTreeNode, ChainError} from 'types';
 import {getBranch} from 'utils';
+import {CacheTreeNode} from 'types';
 import {Database} from 'api/database';
+import {editorReset} from '../';
+import {pullElementFromDbFx} from '../database';
 import {
-    applyChanges,
     cacheData$,
     cacheEditing$,
     cacheEditingReset,
     cacheSelectedId$,
     cacheSelectedIdsChain$,
     cacheSelectedReset,
-    dbData$,
-    dbSelectedIdsChain$,
-    EditorGate,
-    editorReset,
     elementAdded,
     elementDeleted,
     elementEditEnded,
     elementEditStarted,
-    elementPulled,
     newElementCreated,
-    pullElementFromDbFx,
-    resetDbFx,
-    updateDbFx,
 } from './index';
-
-// database
-
-dbData$.on([EditorGate.open, updateDbFx.done, resetDbFx.done], () => ({
-    innerData: Database.getData(),
-}));
-dbSelectedIdsChain$.reset(pullElementFromDbFx.done, editorReset);
-
-forward({from: editorReset, to: resetDbFx});
-
-sample({
-    clock: elementPulled,
-    source: dbSelectedIdsChain$,
-    target: pullElementFromDbFx,
-});
-
-sample({
-    clock: applyChanges,
-    source: cacheData$.map((state) => state.innerData),
-    target: updateDbFx,
-});
-
-pullElementFromDbFx.failData.watch((error) => {
-    const chainError = error as ChainError;
-    console.error(chainError.message, chainError.chain);
-});
-
-// cache
 
 cacheData$
     .on(pullElementFromDbFx.doneData, (state, payload) => {

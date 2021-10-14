@@ -1,1 +1,2 @@
-import './editor/init';
+import './database/init';
+import './cache/init';
